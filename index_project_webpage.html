@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: AI Chatbot with RAG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom font for a professional look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Light gray background */
+            color: #334155; /* Darker gray text */
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px; /* Underline width */
+            height: 3px;
+            background-color: #3b82f6; /* Blue underline */
+            border-radius: 9999px; /* Rounded ends for the underline */
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen flex flex-col items-center py-10 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8 sm:p-10 lg:p-12">
+
+            <header class="text-center mb-12">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-4 rounded-md">
+                    Technical Chatbot 1 GenAI
+                </h1>
+                <p class="text-lg sm:text-xl text-gray-600 mb-6">
+                    Building an intelligent chatbot grounded in custom knowledge bases using advanced NLP techniques.
+                </p>
+                <p class="text-md text-gray-500">By Amith MG</p>
+            </header>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 section-title mb-6">1. Project Overview</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    This project details the development of an AI chatbot capable of providing accurate and contextually relevant answers by leveraging Retrieval-Augmented Generation (RAG). Unlike traditional chatbots that rely solely on pre-trained language models, this RAG-based chatbot augments the Language Model (LLM) with information retrieved from a specific knowledge base, such as a technical book. This approach significantly reduces hallucinations and ensures answers are grounded in provided data.
+                </p>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
+                    <li><strong>Problem:</strong> Large Language Models (LLMs) can sometimes "hallucinate" or provide inaccurate information not present in their training data.</li>
+                    <li><strong>Goal:</strong> To build a chatbot that answers questions based *only* on a given technical book, ensuring accuracy and factual consistency.</li>
+                    <li><strong>Impact:</strong> Provides a reliable source of information from specific documents, ideal for technical support, educational tools, and internal knowledge retrieval systems.</li>
+                </ul>
+                <div class="text-center mt-8">
+                    <a href="#" target="_blank" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105">
+                        <i class="fas fa-play-circle mr-2"></i> View Project Demo (Coming Soon)
+                    </a>
+                </div>
+            </section>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 section-title mb-6">2. Key Components & Methodology</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    The chatbot's architecture follows a standard RAG workflow, involving data preparation, embedding creation, vector storage, and integrated retrieval with an LLM.
+                </p>
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">2.1. Data Preparation (Technical Book)</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>Loading the Book:</strong> The technical book, which can be in formats like PDF, EPUB, Markdown, or plain text, is loaded. Libraries such as `PyPDFLoader` (for PDFs) or `UnstructuredFileLoader` are used to extract raw text.</li>
+                            <li><strong>Chunking:</strong> The extracted text is broken down into smaller, semantically meaningful chunks. This is crucial due to LLM context window limits and for more precise retrieval. A `RecursiveCharacterTextSplitter` from `langchain.text_splitter` is used for this purpose. Recommended starting points for `chunk_size` are 500-1000 tokens/characters with a `chunk_overlap` of 50-100 to maintain context.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">2.2. Create Embeddings and Vector Store</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>Embedding Model:</strong> A chosen embedding model (e.g., All-MiniLM-L6-v2 or an Ollama-compatible model) is used to convert text chunks into numerical vector representations. `SentenceTransformerEmbeddings` from `langchain_community.embeddings` is typically employed.</li>
+                            <li><strong>Vector Store:</strong> The generated chunk embeddings are stored in a vector database. For local development, `FAISS` (Facebook AI Similarity Search) or `ChromaDB` (local mode) are excellent choices. `LanceDB` is another good option for local storage.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">2.3. Implement Retrieval-Augmented Generation (RAG)</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>Framework:</strong> Libraries like LangChain or LlamaIndex are utilized to streamline the RAG process.</li>
+                            <li><strong>Retriever:</strong> The vector store acts as the retriever. Upon receiving a user query, it fetches the top-N most similar chunks.</li>
+                            <li><strong>LLM Integration (Ollama):</strong>
+                                <ul class="list-circle list-inside ml-4 text-gray-600">
+                                    <li>Ollama is installed to run local LLMs (e.g., `gemma:2b` or `phi3`).</li>
+                                    <li>`OllamaLLM` from `langchain_community.llms` is used for integration.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Prompt Engineering for RAG:</strong> A crucial step involves creating a prompt template that incorporates both the user's query and the retrieved context. The LLM is explicitly instructed to answer *only* based on the provided context to prevent hallucinations. An example prompt structure is provided.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">2.4. Build the Chatbot Interface</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>Python Libraries:</strong>
+                                <ul class="list-circle list-inside ml-4 text-gray-600">
+                                    <li>`Streamlit` or `Gradio` are used for rapid development of web user interfaces for the chatbot.</li>
+                                    <li>`FastAPI` can be used to build a more robust backend API for the chatbot.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 section-title mb-6">3. Tools & Technologies</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    This project leverages a comprehensive set of Python tools and libraries for efficient data handling, NLP, and machine learning:
+                </p>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-800">Programming Language</h4>
+                        <ul class="list-disc list-inside ml-4 text-gray-700">
+                            <li><strong>Python:</strong> The core language for development due to its rich ecosystem for AI/ML.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-800">Core Libraries & Modules</h4>
+                        <ul class="list-disc list-inside ml-4 text-gray-700">
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">langchain</span> / <span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">LlamaIndex:</span> Frameworks for building LLM applications.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">langchain_community.document_loaders:</span> For loading various document types (`PyPDFLoader`, `UnstructuredFileLoader`).</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">langchain.text_splitter.RecursiveCharacterTextSplitter:</span> For efficient text chunking.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">langchain_community.embeddings.SentenceTransformerEmbeddings:</span> For generating text embeddings.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">langchain_community.llms.OllamaLLM:</span> For integrating local Ollama LLMs.</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 class="text-lg font-semibold text-gray-800">Vector Stores</h4>
+                        <ul class="list-disc list-inside ml-4 text-gray-700">
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">FAISS (Facebook AI Similarity Search):</span> Efficient library for similarity search.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">ChromaDB:</span> Lightweight, open-source vector database.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">LanceDB:</span> Another option for local vector storage.</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h4 class="text-lg font-semibold text-gray-800">Chatbot Interface</h4>
+                        <ul class="list-disc list-inside ml-4 text-gray-700">
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">Streamlit:</span> For quick and easy web UI prototyping.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">Gradio:</span> For rapidly building web interfaces for ML models.</li>
+                            <li><span class="font-mono text-sm bg-gray-200 px-1 py-0.5 rounded">FastAPI:</span> For building robust backend APIs.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 section-title mb-6">4. Further Considerations</h2>
+                <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
+                    <li><strong>Prompt Engineering:</strong> Crafting effective prompts is critical to guide the LLM to provide accurate answers based *only* on the retrieved context.</li>
+                    <li><strong>Experimentation with Chunking:</strong> The performance of the RAG system can be significantly impacted by `chunk_size` and `chunk_overlap`. Experimentation is key to finding optimal values.</li>
+                    <li><strong>Embedding Model Selection:</strong> The choice of embedding model directly influences the quality of semantic search and retrieval.</li>
+                </ul>
+            </section>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 section-title mb-6">5. Conclusion & Future Work</h2>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    This project provides a robust foundation for building intelligent chatbots that are grounded in specific knowledge bases, addressing the challenge of factual accuracy in AI responses.
+                </p>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li><strong>Future Work 1:</strong> Integrate with dynamic content sources, allowing the chatbot to update its knowledge base automatically.</li>
+                    <li><strong>Future Work 2:</strong> Implement conversational memory to enable multi-turn dialogues while maintaining context.</li>
+                    <li><strong>Future Work 3:</strong> Explore advanced ranking algorithms for retrieved chunks to improve answer relevance.</li>
+                    <li><strong>Future Work 4:</strong> Develop a user feedback mechanism to continuously refine the chatbot's performance.</li>
+                </ul>
+            </section>
+
+            <section class="text-center">
+                <h2 class="text-3xl font-bold text-gray-800 section-title mb-6 mx-auto w-fit">Connect with Me</h2>
+                <div class="flex justify-center space-x-6 text-2xl">
+                    <a href="#" target="_blank" class="text-gray-600 hover:text-blue-600 transition duration-300 ease-in-out" aria-label="Project Repository (Placeholder)">
+                        <i class="fab fa-github rounded-full p-2 bg-gray-100 hover:bg-blue-50 shadow-sm"></i>
+                    </a>
+                    <a href="#" target="_blank" class="text-gray-600 hover:text-blue-600 transition duration-300 ease-in-out" aria-label="Live Demo (Placeholder)">
+                        <i class="fas fa-globe rounded-full p-2 bg-gray-100 hover:bg-blue-50 shadow-sm"></i>
+                    </a>
+                    <a href="https://in.linkedin.com/in/amithmg6" target="_blank" class="text-gray-600 hover:text-blue-600 transition duration-300 ease-in-out" aria-label="LinkedIn Profile">
+                        <i class="fab fa-linkedin rounded-full p-2 bg-gray-100 hover:bg-blue-50 shadow-sm"></i>
+                    </a>
+                    <a href="mailto:amithds2017@gmail.com" class="text-gray-600 hover:text-blue-600 transition duration-300 ease-in-out" aria-label="Email Address">
+                        <i class="fas fa-envelope rounded-full p-2 bg-gray-100 hover:bg-blue-50 shadow-sm"></i>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm mt-4">Amith MG | amithds2017@gmail.com</p>
+            </section>
+
+        </div>
+    </div>
+</body>
+</html>
